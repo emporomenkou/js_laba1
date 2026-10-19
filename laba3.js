@@ -228,7 +228,17 @@ function isContainNumber(num, digit) {
  *  [1, 2, 3, 4, 5] => -1   => no balance element
  */
 function getBalanceIndex(arr) {
-
+    let sum = 0, leftSum = 0
+    for (let i = 0; i < arr.length; i++) {
+        sum += arr[i]
+    }
+    for (let i = 0; i < arr.length; i++) {
+        if (leftSum === sum - arr[i] - leftSum) {
+            return i
+        }
+        leftSum += arr[i]
+    }
+    return -1
 }
 
 /**
@@ -252,8 +262,49 @@ function getBalanceIndex(arr) {
  *          [10, 9,  8,  7]
  *        ]
  */
-function getSpiralMatrix(/* size */) {
+function getSpiralMatrix(size) {
+    const matrix = []
+    for (let i = 0; i < size; i++) {
+    matrix[i] = []
+    }
+    let counter = 1
+    let top = 0
+    let bottom = size - 1
+    let left = 0
+    let right = size - 1
 
+    while (top <= bottom && left <= right) {
+
+    for (let i = left; i <= right; i++) {
+        matrix[top][i] = counter
+        counter++
+    }
+    top++
+
+    for (let i = top; i <= bottom; i++) {
+        matrix[i][right] = counter
+        counter++
+    }
+    right--
+
+    if (top <= bottom) {
+        for (let i = right; i >= left; i--) {
+        matrix[bottom][i] = counter
+        counter++
+        }
+        bottom--
+    }
+
+    if (left <= right) {
+        for (let i = bottom; i >= top; i--) {
+        matrix[i][left] = counter
+        counter++
+        }
+        left++
+    }
+    }
+
+    return matrix;
 }
 
 /**
@@ -271,8 +322,27 @@ function getSpiralMatrix(/* size */) {
  *    [7, 8, 9]         [9, 6, 3]
  *  ]                 ]
  */
-function rotateMatrix(/* matrix */) {
+function rotateMatrix(matrix) {
+    for (let i = 0; i < matrix.length; i++) {
+        for (let j = i + 1; j < matrix[i].length; j++) {
+            const temp = matrix[i][j]
+            matrix[i][j] = matrix[j][i]
+            matrix[j][i] = temp
+        }
+    }
 
+    for (let i = 0; i < matrix.length; i++) {
+        let left = 0
+        let right = matrix.length - 1
+        while (right > left) {
+            const temp = matrix[i][right]
+            matrix[i][right] = matrix[i][left]
+            matrix[i][left] = temp
+            left++
+            right--
+        }
+    }
+    return matrix
 }
 
 /**
@@ -289,8 +359,36 @@ function rotateMatrix(/* matrix */) {
  *  [2, 9, 5, 9]    => [2, 5, 9, 9]
  *  [-2, 9, 5, -3]  => [-3, -2, 5, 9]
  */
-function sortByAsc(/* arr */) {
+function sortByAsc(arr) {
+    function quickSort(left, right) {
+        if (left >= right) return
 
+        const pivot = arr[left + ((right - left) >> 1)]
+        let i = left
+        let j = right
+
+        while (i <= j) {
+            while (arr[i] < pivot) {
+            i++
+            }
+            while (arr[j] > pivot) {
+            j--
+            }
+            if (i <= j) {
+            const temp = arr[i]
+            arr[i] = arr[j]
+            arr[j] = temp
+            i++
+            j--
+            }
+        }
+
+        quickSort(left, j)
+        quickSort(i, right)
+    }
+
+    quickSort(0, arr.length - 1)
+    return arr
 }
 
 /**
@@ -310,8 +408,53 @@ function sortByAsc(/* arr */) {
  *  '012345', 3 => '024135' => '043215' => '031425'
  *  'qwerty', 3 => 'qetwry' => 'qtrewy' => 'qrwtey'
  */
-function shuffleChar(/* str, iterations */) {
+function shuffleChar(str, iterations) {
+    if (!str || iterations <= 0) return str
 
+    let currentStr = str
+    let period = 0
+
+    for (let i = 1; i <= iterations; i++) {
+    let evenChars = ''
+    let oddChars = ''
+
+    for (let j = 0; j < currentStr.length; j++) {
+        if (j % 2 === 0) {
+        evenChars += currentStr[j]
+        } else {
+        oddChars += currentStr[j]
+        }
+    }
+
+    currentStr = evenChars + oddChars
+
+    if (currentStr === str) {
+        period = i
+        break
+    }
+    }
+
+    if (period > 0) {
+    const remainingIterations = iterations % period;
+    currentStr = str
+
+    for (let i = 0; i < remainingIterations; i++) {
+        let evenChars = ''
+        let oddChars = ''
+
+        for (let j = 0; j < currentStr.length; j++) {
+        if (j % 2 === 0) {
+            evenChars += currentStr[j]
+        } 
+        else {
+            oddChars += currentStr[j]
+        }
+        }
+        currentStr = evenChars + oddChars
+    }
+    }
+
+    return currentStr
 }
 
 /**
@@ -332,7 +475,48 @@ function shuffleChar(/* str, iterations */) {
  * 321321   => 322113
  *
  */
-function getNearestBigger(/* number */) {
+function getNearestBigger(number) {
+    const digits = [];
+    let temp = number;
+    while (temp > 0) {
+        digits.push(temp % 10);
+        temp = Math.floor(temp / 10);
+    }
     
-}
+    digits.reverse();
 
+    let i = digits.length - 2;
+    while (i >= 0 && digits[i] >= digits[i + 1]) {
+        i--;
+    }
+
+    if (i < 0) return number;
+
+    let j = digits.length - 1;
+    while (digits[j] <= digits[i]) {
+        j--;
+    }
+
+    // Шаг 3: Меняем местами
+    const swap = digits[i];
+    digits[i] = digits[j];
+    digits[j] = swap;
+
+
+    let left = i + 1;
+    let right = digits.length - 1;
+    while (left < right) {
+        const t = digits[left];
+        digits[left] = digits[right];
+        digits[right] = t;
+        left++;
+        right--;
+    }
+
+    let result = 0;
+    for (let k = 0; k < digits.length; k++) {
+        result = result * 10 + digits[k];
+    }
+
+    return result;
+}
