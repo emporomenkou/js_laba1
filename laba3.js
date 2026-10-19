@@ -476,47 +476,47 @@ function shuffleChar(str, iterations) {
  *
  */
 function getNearestBigger(number) {
-    const digits = [];
-    let temp = number;
+    const digits = []
+    let temp = number
     while (temp > 0) {
-        digits.push(temp % 10);
-        temp = Math.floor(temp / 10);
+        digits.push(temp % 10)
+        temp = Math.floor(temp / 10)
     }
     
-    digits.reverse();
+    digits.reverse()
 
-    let i = digits.length - 2;
+    let i = digits.length - 2
     while (i >= 0 && digits[i] >= digits[i + 1]) {
-        i--;
+        i--
     }
 
-    if (i < 0) return number;
+    if (i < 0) return number
 
-    let j = digits.length - 1;
+    let j = digits.length - 1
     while (digits[j] <= digits[i]) {
-        j--;
+        j--
     }
 
     // Шаг 3: Меняем местами
-    const swap = digits[i];
-    digits[i] = digits[j];
-    digits[j] = swap;
+    const swap = digits[i]
+    digits[i] = digits[j]
+    digits[j] = swap
 
 
-    let left = i + 1;
-    let right = digits.length - 1;
+    let left = i + 1
+    let right = digits.length - 1
     while (left < right) {
-        const t = digits[left];
-        digits[left] = digits[right];
-        digits[right] = t;
-        left++;
-        right--;
+        const t = digits[left]
+        digits[left] = digits[right]
+        digits[right] = t
+        left++
+        right--
     }
 
-    let result = 0;
+    let result = 0
     for (let k = 0; k < digits.length; k++) {
-        result = result * 10 + digits[k];
+        result = result * 10 + digits[k]
     }
 
-    return result;
+    return result
 }
